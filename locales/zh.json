@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "语言",
+    "confirm": "确认",
+    "headerTitle": "图像大小调整器",
+    "imageFolderPath": "图像文件夹路径",
+    "loadImages": "加载图像",
+    "presetSelect": "选择预设",
+    "presetCustom": "自定义",
+    "convertedImageWidth": "转换后宽度 (比例)",
+    "convertedImageHeight": "转换后高度 (比例)",
+    "aspectRatio": "宽高比",
+    "imageDescription": "图像描述 (将创建 .txt 文件)",
+    "saveCropOnly": "仅保存裁剪区域",
+    "saveCropResize": "裁剪并调整大小后保存",
+    "viewerPlaceholder": "输入文件夹路径，然后点击“加载图像”。",
+    "changeLanguage": "更改语言",
+    "originalImageSize": "原始大小",
+    "ratioControlTitle": "比例控制",
+    "sizeControlTitle": "大小控制",
+    "widthHeightLabel": "宽度 x 高度",
+    "maintainRatio": "保持比例"
+}

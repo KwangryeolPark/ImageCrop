@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "언어",
+    "confirm": "확인",
+    "headerTitle": "이미지 크기 변환",
+    "imageFolderPath": "이미지 폴더 경로",
+    "loadImages": "이미지 불러오기",
+    "presetSelect": "프리셋 선택",
+    "presetCustom": "직접 입력",
+    "convertedImageWidth": "변환될 이미지 너비 (비율)",
+    "convertedImageHeight": "변환될 이미지 높이 (비율)",
+    "aspectRatio": "가로:세로 비율",
+    "imageDescription": "이미지 설명 (저장 시 .txt 파일로 생성)",
+    "saveCropOnly": "선택 영역 저장 (크롭만)",
+    "saveCropResize": "자른 후 크기 조정하여 저장",
+    "viewerPlaceholder": "폴더 경로를 입력하고 '이미지 불러오기'를 클릭하세요.",
+    "changeLanguage": "언어 변경",
+    "originalImageSize": "원본 이미지 크기",
+    "ratioControlTitle": "비율 조정",
+    "sizeControlTitle": "크기 조정",
+    "widthHeightLabel": "너비 x 높이",
+    "maintainRatio": "비율 유지"
+}

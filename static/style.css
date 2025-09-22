@@ -1,0 +1,410 @@
+:root {
+    --primary-color: #4a90e2;
+    --background-color: #f4f7f6;
+    --text-color: #333;
+    --border-color: #ddd;
+    --container-bg: #fff;
+    --error-color: #d9534f;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 1600px;
+    background: var(--container-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 25px;
+    text-align: center;
+    position: relative;
+    /* Added for positioning context */
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 280px 1fr 200px;
+    gap: 20px;
+    padding: 20px;
+}
+
+aside.controls,
+aside.thumbnails,
+main.workspace {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Controls --- */
+.controls {
+    gap: 15px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+button:hover:not(:disabled) {
+    background-color: #357abd;
+}
+
+button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.aspect-ratio-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: #eef1f5;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+#aspect-ratio-display {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--primary-color);
+}
+
+/* --- Main Image Viewer --- */
+.workspace {
+    background: #e0e0e0;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+}
+
+#main-image-viewer {
+    position: relative;
+    max-width: 100%;
+    max-height: calc(100vh - 150px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#main-image-viewer img {
+    max-width: 100%;
+    max-height: calc(100vh - 150px);
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* --- Thumbnail List --- */
+#thumbnail-list {
+    display: flex;
+    /* Use flexbox for layout */
+    flex-direction: column;
+    /* Stack items vertically */
+    gap: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+    padding-right: 5px;
+}
+
+.thumbnail {
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    /* 이 줄을 추가하세요 */
+}
+
+.thumbnail img {
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.thumbnail.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.edited-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.edited-indicator.with-text {
+    background-color: rgba(26, 148, 49, 0.7);
+}
+
+
+/* --- Crop Box --- */
+.crop-box {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    background-color: transparent !important;
+    cursor: move;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+.crop-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #333;
+    border-radius: 50%;
+}
+
+.crop-handle.br {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+/* --- Button Group --- */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 15px;
+}
+
+#crop-and-resize-button {
+    background-color: #e67e22;
+}
+
+#crop-and-resize-button:hover:not(:disabled) {
+    background-color: #d35400;
+}
+
+/* --- Language Selector Page Styles --- */
+.language-selector-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #eef1f5;
+}
+
+.language-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.language-container h1 {
+    margin-bottom: 25px;
+    font-size: 2rem;
+    color: var(--text-color);
+}
+
+.language-list {
+    list-style: none;
+    margin-bottom: 30px;
+    max-height: 40vh;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.language-list li {
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.language-list li:last-child {
+    border-bottom: none;
+}
+
+.language-list li:hover {
+    background-color: #f4f7f6;
+}
+
+.language-list li.active {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+}
+
+#confirm-language-button {
+    width: 100%;
+    font-size: 1.2rem;
+}
+
+/* --- Language Changer in Header --- */
+.language-changer {
+    position: absolute;
+    top: 50%;
+    right: 25px;
+    transform: translateY(-50%);
+}
+
+.language-changer select {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.language-changer select:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-changer select option {
+    background-color: #333;
+    color: white;
+}
+
+/* --- 모든 꼭짓점 핸들 스타일 추가 --- */
+.crop-handle.tl {
+    top: -6px;
+    left: -6px;
+    cursor: nwse-resize;
+}
+
+.crop-handle.tr {
+    top: -6px;
+    right: -6px;
+    cursor: nesw-resize;
+}
+
+.crop-handle.bl {
+    bottom: -6px;
+    left: -6px;
+    cursor: nesw-resize;
+}
+
+/* 기존 br 핸들의 커서 속성도 통일성을 위해 수정합니다. */
+.crop-handle.br {
+    bottom: -6px;
+    right: -6px;
+    cursor: nwse-resize;
+}
+
+/* --- NEW: Crop Box Dimension Display --- */
+.crop-dimension-display {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 1.00);
+    color: #d9534f;
+    /* red */
+    font-size: 14px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    /* Make it non-interactive */
+    font-family: monospace;
+    transition: all 0.1s ease-in-out;
+    /* Smooth transition for position change */
+}
+
+/* Default state: Outside */
+.width-display {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 5px;
+}
+
+.height-display {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+/* Flipped state: Inside */
+.width-display.inside {
+    bottom: auto;
+    top: 0;
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.height-display.inside {
+    right: auto;
+    left: 0;
+    margin-right: 0;
+    margin-left: 5px;
+}

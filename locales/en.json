@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "Language",
+    "confirm": "Confirm",
+    "headerTitle": "Image Resizer",
+    "imageFolderPath": "Image Folder Path",
+    "loadImages": "Load Images",
+    "presetSelect": "Select Preset",
+    "presetCustom": "Custom",
+    "convertedImageWidth": "Converted Image Width (Ratio)",
+    "convertedImageHeight": "Converted Image Height (Ratio)",
+    "aspectRatio": "Aspect Ratio",
+    "imageDescription": "Image Description (.txt file will be created)",
+    "saveCropOnly": "Save Cropped Area (Crop Only)",
+    "saveCropResize": "Save after Crop & Resize",
+    "viewerPlaceholder": "Enter folder path and click 'Load Images'.",
+    "changeLanguage": "Language",
+    "originalImageSize": "Original Size",
+    "ratioControlTitle": "Ratio Control",
+    "sizeControlTitle": "Size Control",
+    "widthHeightLabel": "Width x Height",
+    "maintainRatio": "Maintain Ratio"
+}

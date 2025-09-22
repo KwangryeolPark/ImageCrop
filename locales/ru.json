@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "Язык",
+    "confirm": "Подтвердить",
+    "headerTitle": "Изменение размера изображений",
+    "imageFolderPath": "Путь к папке с изображениями",
+    "loadImages": "Загрузить изображения",
+    "presetSelect": "Выбрать пресет",
+    "presetCustom": "Пользовательский",
+    "convertedImageWidth": "Ширина для конвертации (соотношение)",
+    "convertedImageHeight": "Высота для конвертации (соотношение)",
+    "aspectRatio": "Соотношение сторон",
+    "imageDescription": "Описание изображения (будет создан .txt файл)",
+    "saveCropOnly": "Сохранить обрезанную область (только обрезка)",
+    "saveCropResize": "Обрезать, изменить размер и сохранить",
+    "viewerPlaceholder": "Введите путь к папке и нажмите 'Загрузить изображения'.",
+    "changeLanguage": "Сменить язык",
+    "originalImageSize": "Исходный размер",
+    "ratioControlTitle": "Управление соотношением",
+    "sizeControlTitle": "Управление размером",
+    "widthHeightLabel": "Ширина x Высота",
+    "maintainRatio": "Сохранять соотношение"
+}

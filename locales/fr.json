@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "Langue",
+    "confirm": "Confirmer",
+    "headerTitle": "Redimensionneur d'Image",
+    "imageFolderPath": "Chemin du dossier d'images",
+    "loadImages": "Charger les images",
+    "presetSelect": "Sélectionner un préréglage",
+    "presetCustom": "Personnalisé",
+    "convertedImageWidth": "Largeur de conversion (Ratio)",
+    "convertedImageHeight": "Hauteur de conversion (Ratio)",
+    "aspectRatio": "Format de l'image",
+    "imageDescription": "Description de l'image (un fichier .txt sera créé)",
+    "saveCropOnly": "Enregistrer la zone recadrée (Seulement)",
+    "saveCropResize": "Recadrer & Redimensionner puis enregistrer",
+    "viewerPlaceholder": "Entrez le chemin du dossier et cliquez sur 'Charger les images'.",
+    "changeLanguage": "Changer de langue",
+    "originalImageSize": "Taille d'origine",
+    "ratioControlTitle": "Contrôle du ratio",
+    "sizeControlTitle": "Contrôle de la taille",
+    "widthHeightLabel": "Largeur x Hauteur",
+    "maintainRatio": "Maintenir le ratio"
+}

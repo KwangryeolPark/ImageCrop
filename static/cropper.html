@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n-key="headerTitle">Image Resizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1 data-i18n-key="headerTitle">Image Resizer</h1>
+            <div class="language-changer">
+                <select id="language-selector-dropdown">
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="controls">
+                <div class="control-group">
+                    <label for="image-folder-path" data-i18n-key="imageFolderPath"></label>
+                    <input type="text" id="image-folder-path" placeholder="C:\Users\YourUser\Pictures">
+                    <button id="load-button" data-i18n-key="loadImages"></button>
+                </div>
+                <div class="control-group">
+                    <label for="size-preset" data-i18n-key="presetSelect"></label>
+                    <select id="size-preset">
+                        <option value="custom" data-i18n-key="presetCustom"></option>
+                        <option value="512x512">512x512</option>
+                        <option value="512x768">512x768</option>
+                        <option value="512x1024">512x1024</option>
+                        <option value="768x512">768x512</option>
+                        <option value="768x1024">768x1024</option>
+                        <option value="1024x768">1024x768</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="target-width" data-i18n-key="convertedImageWidth"></label>
+                    <input type="number" id="target-width" min="1" value="512">
+                </div>
+                <div class="control-group">
+                    <label for="target-height" data-i18n-key="convertedImageHeight"></label>
+                    <input type="number" id="target-height" min="1" value="768">
+                </div>
+                <div class="control-group aspect-ratio-container">
+                    <label data-i18n-key="aspectRatio"></label>
+                    <span id="aspect-ratio-display">2:3</span>
+                </div>
+
+                <div class="control-group aspect-ratio-container">
+                    <label data-i18n-key="originalImageSize"></label>
+                    <span id="original-size-display">...</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="image-description" data-i18n-key="imageDescription"></label>
+                    <div class="control-group">
+                        <label for="image-description" data-i18n-key="imageDescription"></label>
+                        <textarea id="image-description" rows="5" data-i18n-key="imageDescription"></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="save-button" data-i18n-key="saveCropOnly" disabled></button>
+                        <button id="crop-and-resize-button" data-i18n-key="saveCropResize" disabled></button>
+                    </div>
+            </aside>
+
+            <main class="workspace">
+                <div id="main-image-viewer">
+                    <p data-i18n-key="viewerPlaceholder"></p>
+                </div>
+            </main>
+
+            <aside class="thumbnails">
+                <div id="thumbnail-list"></div>
+            </aside>
+        </div>
+    </div>
+    <script src="/static/cropper.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "Sprache",
+    "confirm": "Bestätigen",
+    "headerTitle": "Bildgrößen-Anpassung",
+    "imageFolderPath": "Bildordnerpfad",
+    "loadImages": "Bilder laden",
+    "presetSelect": "Voreinstellung wählen",
+    "presetCustom": "Benutzerdefiniert",
+    "convertedImageWidth": "Zielbreite (Verhältnis)",
+    "convertedImageHeight": "Zielhöhe (Verhältnis)",
+    "aspectRatio": "Seitenverhältnis",
+    "imageDescription": "Bildbeschreibung (.txt-Datei wird erstellt)",
+    "saveCropOnly": "Nur zugeschnittenen Bereich speichern",
+    "saveCropResize": "Zuschneiden & Größe anpassen, dann speichern",
+    "viewerPlaceholder": "Ordnerpfad eingeben und auf 'Bilder laden' klicken.",
+    "changeLanguage": "Sprache ändern",
+    "originalImageSize": "Originalgröße",
+    "ratioControlTitle": "Verhältnissteuerung",
+    "sizeControlTitle": "Größensteuerung",
+    "widthHeightLabel": "Breite x Höhe",
+    "maintainRatio": "Verhältnis beibehalten"
+}

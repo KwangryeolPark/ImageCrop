@@ -1,0 +1,22 @@
+{
+    "selectLanguage": "言語",
+    "confirm": "確認",
+    "headerTitle": "画像リサイザー",
+    "imageFolderPath": "画像フォルダのパス",
+    "loadImages": "画像を読み込む",
+    "presetSelect": "プリセットを選択",
+    "presetCustom": "カスタム入力",
+    "convertedImageWidth": "変換後の幅 (比率)",
+    "convertedImageHeight": "変換後の高さ (比率)",
+    "aspectRatio": "アスペクト比",
+    "imageDescription": "画像の説明 (保存時に.txtファイルが作成されます)",
+    "saveCropOnly": "選択範囲を保存 (クロップのみ)",
+    "saveCropResize": "クロップ後にリサイズして保存",
+    "viewerPlaceholder": "フォルダパスを入力し、「画像を読み込む」をクリックしてください。",
+    "changeLanguage": "言語を変更",
+    "originalImageSize": "元のサイズ",
+    "ratioControlTitle": "比率コントロール",
+    "sizeControlTitle": "サイズコントロール",
+    "widthHeightLabel": "幅 x 高さ",
+    "maintainRatio": "比率を維持"
+}
