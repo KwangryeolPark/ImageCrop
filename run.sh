@@ -39,14 +39,6 @@ fi
 
 echo "Python version check passed: $python_version"
 
-# Check if main.py exists
-if [ ! -f "main.py" ]; then
-    echo "Error: main.py not found in current directory"
-    exit 1
-fi
-
-echo "Found main.py"
-
 # Install dependencies
 echo "Installing/checking dependencies..."
 pip install -r requirements.txt
