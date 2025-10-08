@@ -32,6 +32,69 @@ document.addEventListener('DOMContentLoaded', async () => {
     let cropWidthDisplay, cropHeightDisplay;
     let lastUpdateStatus = null; // Store last version check result
     const CROP_BOX_BORDER_WIDTH = 2; // Define border width as a constant
+    
+    // --- Client-side caching configuration ---
+    const CLIENT_CACHE_KEY = 'imagecrop_version_cache';
+    const CLIENT_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+    
+    // Client-side cache management functions
+    const saveClientCache = (data) => {
+        try {
+            const cacheData = {
+                data: data,
+                timestamp: Date.now(),
+                expires: Date.now() + CLIENT_CACHE_DURATION
+            };
+            localStorage.setItem(CLIENT_CACHE_KEY, JSON.stringify(cacheData));
+        } catch (error) {
+            console.warn('Failed to save client cache:', error);
+        }
+    };
+    
+    const loadClientCache = () => {
+        try {
+            const cached = localStorage.getItem(CLIENT_CACHE_KEY);
+            if (!cached) return null;
+            
+            const cacheData = JSON.parse(cached);
+            if (Date.now() > cacheData.expires) {
+                localStorage.removeItem(CLIENT_CACHE_KEY);
+                return null;
+            }
+            
+            return cacheData.data;
+        } catch (error) {
+            console.warn('Failed to load client cache:', error);
+            localStorage.removeItem(CLIENT_CACHE_KEY);
+            return null;
+        }
+    };
+    
+    const clearClientCache = () => {
+        try {
+            localStorage.removeItem(CLIENT_CACHE_KEY);
+        } catch (error) {
+            console.warn('Failed to clear client cache:', error);
+        }
+    };
+    
+    const getClientCacheInfo = () => {
+        try {
+            const cached = localStorage.getItem(CLIENT_CACHE_KEY);
+            if (!cached) return { exists: false };
+            
+            const cacheData = JSON.parse(cached);
+            return {
+                exists: true,
+                timestamp: new Date(cacheData.timestamp).toISOString(),
+                expires: new Date(cacheData.expires).toISOString(),
+                isExpired: Date.now() > cacheData.expires,
+                age: Date.now() - cacheData.timestamp
+            };
+        } catch (error) {
+            return { exists: false, error: error.message };
+        }
+    };
 
     // --- I18n & Settings ---
     const applyTranslations = (data) => {
@@ -82,24 +145,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // --- Version Management ---
-    const loadVersionInfo = async () => {
+    const loadVersionInfo = async (forceRefresh = false) => {
         try {
+            // Check client cache first (unless force refresh)
+            if (!forceRefresh) {
+                const cachedData = loadClientCache();
+                if (cachedData) {
+                    console.log('Using client cache for version info');
+                    lastUpdateStatus = cachedData;
+                    updateVersionDisplay(cachedData);
+                    return;
+                }
+            }
+            
             // Show checking status
             versionStatusDisplay.textContent = translations.versionChecking || 'Checking...';
             versionStatusDisplay.className = 'version-status checking';
             
-            const response = await fetch('/api/update-status');
+            // Build URL with force_refresh parameter
+            const url = forceRefresh ? '/api/update-status?force_refresh=true' : '/api/update-status';
+            
+            const response = await fetch(url);
             if (response.ok) {
                 const updateStatus = await response.json();
                 lastUpdateStatus = updateStatus; // Store for language changes
+                
+                // Save to client cache if successful
+                if (updateStatus.status === 'success') {
+                    saveClientCache(updateStatus);
+                }
+                
+                // Log cache information
+                const cacheHit = response.headers.get('X-Cache');
+                if (cacheHit) {
+                    console.log(`Server cache: ${cacheHit}`);
+                }
+                
                 updateVersionDisplay(updateStatus);
             } else {
                 throw new Error(`HTTP ${response.status}`);
             }
         } catch (error) {
             console.error("Failed to load version info:", error);
-            versionStatusDisplay.textContent = translations.versionCheckFailed || 'Check failed';
-            versionStatusDisplay.className = 'version-status error';
+            
+            // Try to use cached data on error
+            const cachedData = loadClientCache();
+            if (cachedData) {
+                console.log('Using cached data due to network error');
+                lastUpdateStatus = cachedData;
+                updateVersionDisplay(cachedData);
+                
+                // Show warning that we're using cached data
+                versionStatusDisplay.textContent = (translations.versionOffline || 'Offline') + ' (cached)';
+                versionStatusDisplay.className = 'version-status offline';
+            } else {
+                versionStatusDisplay.textContent = translations.versionCheckFailed || 'Check failed';
+                versionStatusDisplay.className = 'version-status error';
+            }
         }
     };
 
@@ -483,6 +585,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Refresh version info with new language (without network request)
             refreshVersionDisplay();
         } catch (error) { console.error(`Failed to update language to ${newLang}:`, error); }
+    });
+
+    // Version refresh button
+    const versionRefreshButton = document.getElementById('version-refresh');
+    versionRefreshButton.addEventListener('click', async () => {
+        console.log('Force refreshing version info...');
+        await loadVersionInfo(true); // Force refresh
     });
 
     // --- Initial Call ---

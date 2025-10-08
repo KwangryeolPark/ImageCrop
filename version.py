@@ -16,6 +16,11 @@ VERSION = "1.2.0"  # 원래 버전으로 복원
 RELEASE_DATE = "2025-10-09"
 MIN_PYTHON_VERSION = "3.8"
 
+# Cache Configuration
+CACHE_FILE = "version_cache.json"
+DEFAULT_CACHE_DURATION = 3600  # 1 hour in seconds
+MAX_CACHE_AGE = 86400  # 24 hours maximum
+
 def run_git_command(command: str) -> Optional[str]:
     """Execute git command and return output, or None if failed"""
     try:
@@ -30,6 +35,104 @@ def run_git_command(command: str) -> Optional[str]:
         return None
     except Exception:
         return None
+
+# --- Cache Management Functions ---
+
+def save_cache(data: Dict[str, any], duration: int = DEFAULT_CACHE_DURATION) -> bool:
+    """Save data to cache file with timestamp and TTL"""
+    try:
+        cache_data = {
+            "timestamp": datetime.now().isoformat(),
+            "duration": duration,
+            "data": data
+        }
+        
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CACHE_FILE)
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(cache_data, f, indent=2, default=str)
+        
+        return True
+    except Exception as e:
+        print(f"Warning: Failed to save cache: {e}")
+        return False
+
+def load_cache() -> Optional[Dict[str, any]]:
+    """Load cache data if valid, return None if expired or invalid"""
+    try:
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CACHE_FILE)
+        
+        if not os.path.exists(cache_path):
+            return None
+            
+        with open(cache_path, 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+        
+        # Check if cache structure is valid
+        if not all(key in cache_data for key in ['timestamp', 'duration', 'data']):
+            return None
+        
+        # Check if cache is expired
+        cache_time = datetime.fromisoformat(cache_data['timestamp'])
+        now = datetime.now()
+        age_seconds = (now - cache_time).total_seconds()
+        
+        # Use configured duration, but respect maximum age
+        max_age = min(cache_data.get('duration', DEFAULT_CACHE_DURATION), MAX_CACHE_AGE)
+        
+        if age_seconds > max_age:
+            return None  # Cache expired
+            
+        return cache_data['data']
+        
+    except Exception as e:
+        print(f"Warning: Failed to load cache: {e}")
+        return None
+
+def clear_cache() -> bool:
+    """Clear cache file"""
+    try:
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CACHE_FILE)
+        if os.path.exists(cache_path):
+            os.remove(cache_path)
+        return True
+    except Exception as e:
+        print(f"Warning: Failed to clear cache: {e}")
+        return False
+
+def get_cache_info() -> Dict[str, any]:
+    """Get cache information for debugging"""
+    try:
+        cache_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CACHE_FILE)
+        
+        if not os.path.exists(cache_path):
+            return {
+                "exists": False,
+                "path": cache_path
+            }
+            
+        with open(cache_path, 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+        
+        cache_time = datetime.fromisoformat(cache_data['timestamp'])
+        now = datetime.now()
+        age_seconds = (now - cache_time).total_seconds()
+        duration = cache_data.get('duration', DEFAULT_CACHE_DURATION)
+        
+        return {
+            "exists": True,
+            "path": cache_path,
+            "timestamp": cache_data['timestamp'],
+            "age_seconds": age_seconds,
+            "duration": duration,
+            "expired": age_seconds > duration,
+            "data_keys": list(cache_data.get('data', {}).keys())
+        }
+        
+    except Exception as e:
+        return {
+            "exists": False,
+            "error": str(e)
+        }
 
 def get_git_info() -> Dict[str, Optional[str]]:
     """Get current Git information"""
@@ -528,27 +631,110 @@ def compare_versions(current: str, latest: str) -> Dict[str, any]:
             "latest_version": latest
         }
 
-def get_comprehensive_update_status() -> Dict[str, any]:
+def get_comprehensive_update_status(force_refresh: bool = False) -> Dict[str, any]:
     """
     Get comprehensive update status including GitHub latest version
-    This replaces the old get_update_status function
+    Supports caching to reduce API calls
+    
+    Args:
+        force_refresh: If True, bypass cache and fetch fresh data
+        
+    Returns:
+        Dict containing update status information
     """
     try:
+        # Try to use cached data first (unless force refresh)
+        if not force_refresh:
+            cached_data = load_cache()
+            if cached_data is not None:
+                # Add cache hit information
+                cached_data["cache_hit"] = True
+                cached_data["cache_info"] = get_cache_info()
+                return cached_data
+        
         # Get current version info
         current_version = VERSION
         current_info = get_version_info()
         
         # Check internet connection first
         if not check_internet_connection():
+            # Try to return cached data even if expired when offline
+            cached_data = load_cache()
+            if cached_data is not None:
+                cached_data["status"] = "offline_cached"
+                cached_data["message"] = "Offline: Using cached data"
+                cached_data["cache_hit"] = True
+                cached_data["cache_expired"] = True
+                return cached_data
+                
             return {
                 "status": "offline",
                 "message": "Offline: Unable to check for remote updates", 
                 "current_version": current_version,
-                "current_info": current_info
+                "current_info": current_info,
+                "cache_hit": False
             }
         
         # Get latest version from GitHub
         github_info = get_github_latest_version()
+        
+        if github_info["status"] != "success":
+            # Try cached data on GitHub API failure
+            cached_data = load_cache()
+            if cached_data is not None:
+                cached_data["status"] = "api_error_cached"
+                cached_data["message"] = f"API Error: {github_info.get('message', 'Unknown error')}, using cached data"
+                cached_data["cache_hit"] = True
+                cached_data["api_error"] = github_info
+                return cached_data
+                
+            return {
+                "status": github_info["status"],
+                "message": github_info.get("message", "Failed to get latest version"),
+                "current_version": current_version,
+                "current_info": current_info,
+                "error_details": github_info,
+                "cache_hit": False
+            }
+        
+        # Compare versions
+        latest_version = github_info["version"]
+        comparison = compare_versions(current_version, latest_version)
+        
+        # Prepare result
+        result = {
+            "status": "success",
+            "current_version": current_version,
+            "latest_version": latest_version,
+            "github_info": github_info,
+            "comparison": comparison,
+            "current_info": current_info,
+            "last_checked": datetime.now().isoformat(),
+            "cache_hit": False
+        }
+        
+        # Save to cache
+        save_cache(result)
+        
+        return result
+        
+    except Exception as e:
+        # Try cached data on unexpected error
+        cached_data = load_cache()
+        if cached_data is not None:
+            cached_data["status"] = "error_cached"
+            cached_data["message"] = f"Unexpected error: {str(e)}, using cached data"
+            cached_data["cache_hit"] = True
+            cached_data["error"] = str(e)
+            return cached_data
+            
+        return {
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}",
+            "current_version": VERSION,
+            "last_checked": datetime.now().isoformat(),
+            "cache_hit": False
+        }
         
         if github_info["status"] != "success":
             return {

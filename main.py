@@ -93,18 +93,36 @@ async def get_version():
         )
 
 @app.get("/api/update-status")
-async def get_update_status():
-    """Get comprehensive update status including GitHub latest version"""
+async def get_update_status(force_refresh: bool = False):
+    """
+    Get comprehensive update status including GitHub latest version
+    
+    Args:
+        force_refresh: If True, bypass cache and fetch fresh data
+    """
     try:
-        update_status = get_comprehensive_update_status()
-        return JSONResponse(content=update_status)
+        update_status = get_comprehensive_update_status(force_refresh=force_refresh)
+        
+        # Set cache headers based on whether data was cached
+        headers = {}
+        if update_status.get("cache_hit", False):
+            headers["X-Cache"] = "HIT"
+            headers["Cache-Control"] = "public, max-age=60"  # Cache for 1 minute
+        else:
+            headers["X-Cache"] = "MISS"
+            headers["Cache-Control"] = "public, max-age=300"  # Cache for 5 minutes
+            
+        return JSONResponse(content=update_status, headers=headers)
+        
     except Exception as e:
         return JSONResponse(
             content={
                 "error": f"Failed to get update status: {str(e)}",
-                "status": "error"
+                "status": "error",
+                "cache_hit": False
             },
-            status_code=500
+            status_code=500,
+            headers={"X-Cache": "ERROR", "Cache-Control": "no-cache"}
         )
 
 @app.get("/api/get-language")

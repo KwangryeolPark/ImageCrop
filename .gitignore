@@ -2,6 +2,7 @@ venv/
 test_images/resized/
 language.json
 save.json
+version_cache.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -211,3 +212,25 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 save.json
+
+# Additional cache and temporary files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional - keep if you want to share settings)
+.vscode/settings.json
+.vscode/launch.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Test files and temporary test data
+test_*.py
+*_test.py
+test_cache.*
+cache_test.*

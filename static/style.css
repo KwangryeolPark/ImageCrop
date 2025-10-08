@@ -73,6 +73,12 @@ header h1 {
     opacity: 0.8;
 }
 
+.version-status-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .version-status.up-to-date {
     color: #90EE90; /* Light green */
 }
@@ -91,6 +97,27 @@ header h1 {
 
 .version-status.error {
     color: #FFA07A; /* Light salmon */
+}
+
+.version-refresh {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.version-refresh:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.version-refresh:active {
+    transform: rotate(360deg);
+    transition: transform 0.5s ease;
 }
 
 .main-content {
