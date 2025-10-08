@@ -40,7 +40,57 @@ header {
     padding: 15px 25px;
     text-align: center;
     position: relative;
-    /* Added for positioning context */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    flex: 1;
+}
+
+/* --- Version Info --- */
+.version-info {
+    position: absolute;
+    top: 50%;
+    left: 25px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 0.8em;
+    opacity: 0.9;
+}
+
+.current-version {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.version-status {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.version-status.up-to-date {
+    color: #90EE90; /* Light green */
+}
+
+.version-status.outdated {
+    color: #FFB6C1; /* Light pink */
+}
+
+.version-status.ahead {
+    color: #87CEEB; /* Sky blue */
+}
+
+.version-status.checking {
+    color: #F0E68C; /* Khaki */
+}
+
+.version-status.error {
+    color: #FFA07A; /* Light salmon */
 }
 
 .main-content {
@@ -407,4 +457,42 @@ button:disabled {
     left: 0;
     margin-right: 0;
     margin-left: 5px;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 15px;
+    }
+    
+    .version-info {
+        position: static;
+        transform: none;
+        align-items: center;
+        order: -1;
+    }
+    
+    .language-changer {
+        position: static;
+        transform: none;
+        order: 1;
+    }
+    
+    header h1 {
+        order: 0;
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .version-info {
+        font-size: 0.7em;
+    }
+    
+    .current-version, .version-status {
+        display: inline;
+        margin-right: 10px;
+    }
 }
