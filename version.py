@@ -5,11 +5,14 @@ Centralized version information and Git comparison utilities
 
 import subprocess
 import os
+import json
+import urllib.request
+import urllib.error
 from datetime import datetime
 from typing import Dict, Optional, Tuple
 
 # Version Information
-VERSION = "1.2.0"
+VERSION = "1.2.0"  # 원래 버전으로 복원
 RELEASE_DATE = "2025-10-09"
 MIN_PYTHON_VERSION = "3.8"
 
@@ -297,6 +300,349 @@ def print_update_notification():
         print("ℹ️  Update check unavailable")
         print()
 
+# --- GitHub API Integration ---
+
+def get_github_latest_version() -> Dict[str, any]:
+    """
+    Get latest version info from GitHub master branch
+    Handles cases where version.py might not exist on master
+    """
+    try:
+        # GitHub repository info
+        owner = "KwangryeolPark"
+        repo = "ImageCrop"
+        
+        # First, try to get version.py from master branch
+        version_info = _get_version_from_github(owner, repo)
+        if version_info:
+            return {
+                "status": "success",
+                "source": "github_version_file",
+                "version": version_info["version"],
+                "release_date": version_info.get("release_date"),
+                "min_python_version": version_info.get("min_python_version"),
+                "last_checked": datetime.now().isoformat()
+            }
+        
+        # If version.py doesn't exist, try to get info from latest release/tag
+        release_info = _get_latest_release_from_github(owner, repo)
+        if release_info:
+            return {
+                "status": "success",
+                "source": "github_release",
+                "version": release_info["version"],
+                "release_date": release_info.get("published_at"),
+                "release_notes": release_info.get("body"),
+                "last_checked": datetime.now().isoformat()
+            }
+        
+        # If no releases, try to infer from tags
+        tag_info = _get_latest_tag_from_github(owner, repo)
+        if tag_info:
+            return {
+                "status": "success", 
+                "source": "github_tag",
+                "version": tag_info["version"],
+                "commit_sha": tag_info.get("commit_sha"),
+                "last_checked": datetime.now().isoformat()
+            }
+        
+        return {
+            "status": "no_version_info",
+            "message": "No version information found on GitHub",
+            "last_checked": datetime.now().isoformat()
+        }
+        
+    except urllib.error.URLError as e:
+        return {
+            "status": "network_error",
+            "message": f"Network error: {str(e)}",
+            "last_checked": datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error fetching version info: {str(e)}",
+            "last_checked": datetime.now().isoformat()
+        }
+
+def _get_version_from_github(owner: str, repo: str) -> Optional[Dict[str, str]]:
+    """Try to get version info from version.py file on GitHub master branch"""
+    try:
+        # GitHub API URL for version.py file content
+        url = f"https://api.github.com/repos/{owner}/{repo}/contents/version.py?ref=master"
+        
+        with urllib.request.urlopen(url, timeout=10) as response:
+            if response.getcode() == 200:
+                data = json.loads(response.read().decode())
+                
+                # Decode base64 content
+                import base64
+                content = base64.b64decode(data['content']).decode('utf-8')
+                
+                # Extract version info using simple parsing
+                version_info = {}
+                for line in content.split('\n'):
+                    line = line.strip()
+                    if line.startswith('VERSION = '):
+                        version_info['version'] = line.split('=')[1].strip().strip('"\'')
+                    elif line.startswith('RELEASE_DATE = '):
+                        version_info['release_date'] = line.split('=')[1].strip().strip('"\'')
+                    elif line.startswith('MIN_PYTHON_VERSION = '):
+                        version_info['min_python_version'] = line.split('=')[1].strip().strip('"\'')
+                
+                if version_info.get('version'):
+                    return version_info
+                    
+    except (urllib.error.HTTPError, KeyError, json.JSONDecodeError):
+        # File doesn't exist or parsing failed
+        pass
+    except Exception:
+        # Any other error
+        pass
+    
+    return None
+
+def _get_latest_release_from_github(owner: str, repo: str) -> Optional[Dict[str, str]]:
+    """Get latest release info from GitHub releases API"""
+    try:
+        url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
+        
+        with urllib.request.urlopen(url, timeout=10) as response:
+            if response.getcode() == 200:
+                data = json.loads(response.read().decode())
+                
+                tag_name = data.get('tag_name', '')
+                # Extract version number (remove 'v' prefix if present)
+                version = tag_name.lstrip('v')
+                
+                return {
+                    "version": version,
+                    "published_at": data.get('published_at'),
+                    "body": data.get('body'),
+                    "html_url": data.get('html_url')
+                }
+                
+    except (urllib.error.HTTPError, KeyError, json.JSONDecodeError):
+        pass
+    except Exception:
+        pass
+        
+    return None
+
+def _get_latest_tag_from_github(owner: str, repo: str) -> Optional[Dict[str, str]]:
+    """Get latest tag info from GitHub tags API"""
+    try:
+        url = f"https://api.github.com/repos/{owner}/{repo}/tags"
+        
+        with urllib.request.urlopen(url, timeout=10) as response:
+            if response.getcode() == 200:
+                data = json.loads(response.read().decode())
+                
+                if data and len(data) > 0:
+                    latest_tag = data[0]  # First item is the latest
+                    tag_name = latest_tag.get('name', '')
+                    version = tag_name.lstrip('v')
+                    
+                    return {
+                        "version": version,
+                        "commit_sha": latest_tag.get('commit', {}).get('sha')
+                    }
+                    
+    except (urllib.error.HTTPError, KeyError, json.JSONDecodeError):
+        pass
+    except Exception:
+        pass
+        
+    return None
+
+def compare_versions(current: str, latest: str) -> Dict[str, any]:
+    """
+    Compare two version strings (semantic versioning)
+    Returns comparison result and recommendation
+    """
+    try:
+        def parse_version(version_str: str) -> Tuple[int, int, int]:
+            """Parse version string into major, minor, patch integers"""
+            # Remove 'v' prefix if present and clean up
+            clean_version = version_str.lstrip('v').split('-')[0]  # Remove pre-release suffixes
+            parts = clean_version.split('.')
+            
+            # Pad with zeros if needed
+            while len(parts) < 3:
+                parts.append('0')
+                
+            return tuple(int(part) for part in parts[:3])
+        
+        current_tuple = parse_version(current)
+        latest_tuple = parse_version(latest)
+        
+        if current_tuple < latest_tuple:
+            # Calculate difference
+            major_diff = latest_tuple[0] - current_tuple[0]
+            minor_diff = latest_tuple[1] - current_tuple[1] 
+            patch_diff = latest_tuple[2] - current_tuple[2]
+            
+            if major_diff > 0:
+                urgency = "high"
+                recommendation = "Major update available with significant changes"
+            elif minor_diff > 0:
+                urgency = "medium" 
+                recommendation = "Feature update available"
+            else:
+                urgency = "low"
+                recommendation = "Bug fixes and improvements available"
+                
+            return {
+                "status": "outdated",
+                "urgency": urgency,
+                "recommendation": recommendation,
+                "current_version": current,
+                "latest_version": latest,
+                "version_diff": {
+                    "major": major_diff,
+                    "minor": minor_diff, 
+                    "patch": patch_diff
+                }
+            }
+        elif current_tuple > latest_tuple:
+            return {
+                "status": "ahead",
+                "message": "You're running a newer version than released",
+                "current_version": current,
+                "latest_version": latest
+            }
+        else:
+            return {
+                "status": "up_to_date",
+                "message": "You're running the latest version",
+                "current_version": current,
+                "latest_version": latest
+            }
+            
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error comparing versions: {str(e)}",
+            "current_version": current,
+            "latest_version": latest
+        }
+
+def get_comprehensive_update_status() -> Dict[str, any]:
+    """
+    Get comprehensive update status including GitHub latest version
+    This replaces the old get_update_status function
+    """
+    try:
+        # Get current version info
+        current_version = VERSION
+        current_info = get_version_info()
+        
+        # Check internet connection first
+        if not check_internet_connection():
+            return {
+                "status": "offline",
+                "message": "Offline: Unable to check for remote updates", 
+                "current_version": current_version,
+                "current_info": current_info
+            }
+        
+        # Get latest version from GitHub
+        github_info = get_github_latest_version()
+        
+        if github_info["status"] != "success":
+            return {
+                "status": github_info["status"],
+                "message": github_info.get("message", "Failed to get latest version"),
+                "current_version": current_version,
+                "current_info": current_info,
+                "error_details": github_info
+            }
+        
+        # Compare versions
+        latest_version = github_info["version"]
+        comparison = compare_versions(current_version, latest_version)
+        
+        return {
+            "status": "success",
+            "current_version": current_version,
+            "latest_version": latest_version,
+            "github_info": github_info,
+            "comparison": comparison,
+            "current_info": current_info,
+            "last_checked": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}",
+            "current_version": VERSION,
+            "last_checked": datetime.now().isoformat()
+        }
+
+def print_comprehensive_update_notification():
+    """Enhanced update notification with GitHub integration"""
+    try:
+        update_status = get_comprehensive_update_status()
+        status = update_status.get("status", "unknown")
+        
+        if status == "offline":
+            print("📡 Offline: Unable to check for updates")
+            print(f"ℹ️  Current Version: {update_status.get('current_version', 'Unknown')}")
+            
+        elif status == "success":
+            comparison = update_status.get("comparison", {})
+            current_ver = update_status.get("current_version")
+            latest_ver = update_status.get("latest_version")
+            github_info = update_status.get("github_info", {})
+            
+            comp_status = comparison.get("status", "unknown")
+            
+            if comp_status == "up_to_date":
+                print(f"✅ You're running the latest version! (v{current_ver})")
+                
+            elif comp_status == "outdated":
+                urgency = comparison.get("urgency", "unknown")
+                recommendation = comparison.get("recommendation", "Update available")
+                
+                if urgency == "high":
+                    print(f"🚨 Major Update Available: v{current_ver} → v{latest_ver}")
+                elif urgency == "medium":
+                    print(f"💡 Feature Update Available: v{current_ver} → v{latest_ver}")
+                else:
+                    print(f"🔧 Bug Fix Update Available: v{current_ver} → v{latest_ver}")
+                
+                print(f"   📋 {recommendation}")
+                print(f"   📁 Source: {github_info.get('source', 'unknown')}")
+                
+            elif comp_status == "ahead":
+                print(f"🚀 Development Version: v{current_ver} (Latest: v{latest_ver})")
+                print("   ℹ️  You're running a newer version than released")
+                
+        elif status == "network_error":
+            print("🌐 Network Error: Unable to connect to GitHub")
+            print(f"ℹ️  Current Version: {update_status.get('current_version', 'Unknown')}")
+            
+        elif status == "no_version_info":
+            print("❓ No version information found on GitHub")
+            print(f"ℹ️  Current Version: {update_status.get('current_version', 'Unknown')}")
+            
+        else:
+            print("⚠️  Update check failed")
+            if update_status.get("message"):
+                print(f"   🔍 Details: {update_status['message']}")
+            print(f"ℹ️  Current Version: {update_status.get('current_version', 'Unknown')}")
+        
+        print()  # Add spacing
+        
+    except Exception as e:
+        print("ℹ️  Update check unavailable")
+        print(f"ℹ️  Current Version: {VERSION}")
+        print()
+
+# --- Legacy function for backward compatibility ---
+
 if __name__ == "__main__":
     print_version_info()
-    print_update_notification()
+    print_comprehensive_update_notification()
