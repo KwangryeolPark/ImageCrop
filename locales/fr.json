@@ -19,5 +19,11 @@
     "ratioControlTitle": "Contrôle du ratio",
     "sizeControlTitle": "Contrôle de la taille",
     "widthHeightLabel": "Largeur x Hauteur",
-    "maintainRatio": "Maintenir le ratio"
+    "maintainRatio": "Maintenir le ratio",
+    "versionLatest": "Dernière",
+    "versionDevMode": "Version développement",
+    "versionUpdateAvailable": "disponible",
+    "versionChecking": "Vérification...",
+    "versionOffline": "Hors ligne",
+    "versionCheckFailed": "Vérification échouée"
 }

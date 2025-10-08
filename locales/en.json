@@ -19,5 +19,11 @@
     "ratioControlTitle": "Ratio Control",
     "sizeControlTitle": "Size Control",
     "widthHeightLabel": "Width x Height",
-    "maintainRatio": "Maintain Ratio"
+    "maintainRatio": "Maintain Ratio",
+    "versionLatest": "Latest",
+    "versionDevMode": "Dev version",
+    "versionUpdateAvailable": "Update available",
+    "versionChecking": "Checking...",
+    "versionOffline": "Offline",
+    "versionCheckFailed": "Check failed"
 }

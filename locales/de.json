@@ -19,5 +19,11 @@
     "ratioControlTitle": "Verhältnissteuerung",
     "sizeControlTitle": "Größensteuerung",
     "widthHeightLabel": "Breite x Höhe",
-    "maintainRatio": "Verhältnis beibehalten"
+    "maintainRatio": "Verhältnis beibehalten",
+    "versionLatest": "Aktuell",
+    "versionDevMode": "Entwicklungsversion",
+    "versionUpdateAvailable": "verfügbar",
+    "versionChecking": "Prüfen...",
+    "versionOffline": "Offline",
+    "versionCheckFailed": "Prüfung fehlgeschlagen"
 }

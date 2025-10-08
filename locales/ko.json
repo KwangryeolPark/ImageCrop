@@ -19,5 +19,11 @@
     "ratioControlTitle": "비율 조정",
     "sizeControlTitle": "크기 조정",
     "widthHeightLabel": "너비 x 높이",
-    "maintainRatio": "비율 유지"
+    "maintainRatio": "비율 유지",
+    "versionLatest": "최신 버전",
+    "versionDevMode": "개발 버전",
+    "versionUpdateAvailable": "업데이트 가능",
+    "versionChecking": "확인 중...",
+    "versionOffline": "오프라인",
+    "versionCheckFailed": "확인 실패"
 }

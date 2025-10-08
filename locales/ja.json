@@ -19,5 +19,11 @@
     "ratioControlTitle": "比率コントロール",
     "sizeControlTitle": "サイズコントロール",
     "widthHeightLabel": "幅 x 高さ",
-    "maintainRatio": "比率を維持"
+    "maintainRatio": "比率を維持",
+    "versionLatest": "最新",
+    "versionDevMode": "開発版",
+    "versionUpdateAvailable": "利用可能",
+    "versionChecking": "確認中...",
+    "versionOffline": "オフライン",
+    "versionCheckFailed": "確認失敗"
 }

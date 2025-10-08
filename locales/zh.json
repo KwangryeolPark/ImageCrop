@@ -19,5 +19,11 @@
     "ratioControlTitle": "比例控制",
     "sizeControlTitle": "大小控制",
     "widthHeightLabel": "宽度 x 高度",
-    "maintainRatio": "保持比例"
+    "maintainRatio": "保持比例",
+    "versionLatest": "最新",
+    "versionDevMode": "开发版",
+    "versionUpdateAvailable": "可更新",
+    "versionChecking": "检查中...",
+    "versionOffline": "离线",
+    "versionCheckFailed": "检查失败"
 }

@@ -19,5 +19,11 @@
     "ratioControlTitle": "Управление соотношением",
     "sizeControlTitle": "Управление размером",
     "widthHeightLabel": "Ширина x Высота",
-    "maintainRatio": "Сохранять соотношение"
+    "maintainRatio": "Сохранять соотношение",
+    "versionLatest": "Последняя",
+    "versionDevMode": "Версия разработки",
+    "versionUpdateAvailable": "доступно",
+    "versionChecking": "Проверка...",
+    "versionOffline": "Оффлайн",
+    "versionCheckFailed": "Ошибка проверки"
 }
