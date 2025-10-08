@@ -112,6 +112,8 @@ The application will automatically find an available port (starting from 8000) a
 
 ---
 
+## Project Structure & File Descriptions
+
 <details>
 <summary><strong>Project Structure & File Descriptions</strong></summary>
 
