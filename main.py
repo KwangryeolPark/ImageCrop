@@ -1,6 +1,12 @@
 import os
 import io
 import json
+import socket
+import webbrowser
+import threading
+import time
+import uvicorn
+from contextlib import closing
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -167,3 +173,49 @@ async def crop_and_save(request: CropRequest):
 # --- Static Files Mount ---
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/locales", StaticFiles(directory="locales"), name="locales")
+
+# --- Server Startup Functions ---
+def find_free_port(start_port=8000, max_port=8010):
+    """Find an available port starting from start_port"""
+    for port in range(start_port, max_port + 1):
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+            if sock.connect_ex(('127.0.0.1', port)) != 0:
+                return port
+    return None
+
+def open_browser(port):
+    """Open web browser after a short delay"""
+    def delayed_open():
+        time.sleep(3)  # Wait for server to fully start
+        try:
+            webbrowser.open(f'http://127.0.0.1:{port}')
+            print(f"Browser opened: http://127.0.0.1:{port}")
+        except Exception as e:
+            print(f"Could not open browser automatically: {e}")
+            print(f"Please open http://127.0.0.1:{port} manually")
+    
+    threading.Thread(target=delayed_open, daemon=True).start()
+
+# --- Main Server Start ---
+if __name__ == "__main__":
+    print("Starting ImageCrop Server...")
+    
+    # Find available port
+    port = find_free_port()
+    if port is None:
+        print("Error: No available ports found between 8000-8010")
+        print("Please close other applications using these ports")
+        exit(1)
+    
+    print(f"Found available port: {port}")
+    print(f"Server will be available at http://127.0.0.1:{port}")
+    
+    # Start browser opening in background
+    open_browser(port)
+    
+    # Start the server
+    try:
+        uvicorn.run("main:app", host="127.0.0.1", port=port, reload=True)
+    except Exception as e:
+        print(f"Error starting server: {e}")
+        exit(1)
