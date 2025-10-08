@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cropAndResizeButton = getEl('crop-and-resize-button');
     const languageSelectorDropdown = getEl('language-selector-dropdown');
     const originalSizeDisplay = getEl('original-size-display');
+    
+    // Version info elements
+    const currentVersionDisplay = getEl('current-version');
+    const versionStatusDisplay = getEl('version-status');
 
     // --- State Variables ---
     let currentFolder = '';
@@ -26,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let cropperState = {};
     let mainImageElement = null;
     let cropWidthDisplay, cropHeightDisplay;
+    let lastUpdateStatus = null; // Store last version check result
     const CROP_BOX_BORDER_WIDTH = 2; // Define border width as a constant
 
     // --- I18n & Settings ---
@@ -74,6 +79,86 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         } catch (error) { console.error("Failed to load initial settings:", error); }
+    };
+
+    // --- Version Management ---
+    const loadVersionInfo = async () => {
+        try {
+            // Show checking status
+            versionStatusDisplay.textContent = translations.versionChecking || 'Checking...';
+            versionStatusDisplay.className = 'version-status checking';
+            
+            const response = await fetch('/api/update-status');
+            if (response.ok) {
+                const updateStatus = await response.json();
+                lastUpdateStatus = updateStatus; // Store for language changes
+                updateVersionDisplay(updateStatus);
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to load version info:", error);
+            versionStatusDisplay.textContent = translations.versionCheckFailed || 'Check failed';
+            versionStatusDisplay.className = 'version-status error';
+        }
+    };
+
+    const refreshVersionDisplay = () => {
+        // Refresh version display with current language translations
+        if (lastUpdateStatus) {
+            updateVersionDisplay(lastUpdateStatus);
+        }
+    };
+
+    const updateVersionDisplay = (updateStatus) => {
+        const currentVersion = updateStatus.current_version || 'Unknown';
+        const latestVersion = updateStatus.latest_version || 'Unknown';
+        const status = updateStatus.status;
+        
+        // Update current version display
+        currentVersionDisplay.textContent = `v${currentVersion}`;
+        
+        // Update status display based on comparison
+        if (status === 'success') {
+            const comparison = updateStatus.comparison || {};
+            const compStatus = comparison.status;
+            
+            switch (compStatus) {
+                case 'up_to_date':
+                    versionStatusDisplay.textContent = `✅ ${translations.versionLatest || 'Latest'}`;
+                    versionStatusDisplay.className = 'version-status up-to-date';
+                    break;
+                    
+                case 'outdated':
+                    const urgency = comparison.urgency || 'unknown';
+                    if (urgency === 'high') {
+                        versionStatusDisplay.textContent = `🚨 v${latestVersion} ${translations.versionUpdateAvailable || 'available'}`;
+                        versionStatusDisplay.className = 'version-status outdated';
+                    } else if (urgency === 'medium') {
+                        versionStatusDisplay.textContent = `💡 v${latestVersion} ${translations.versionUpdateAvailable || 'available'}`;
+                        versionStatusDisplay.className = 'version-status outdated';
+                    } else {
+                        versionStatusDisplay.textContent = `🔧 v${latestVersion} ${translations.versionUpdateAvailable || 'available'}`;
+                        versionStatusDisplay.className = 'version-status outdated';
+                    }
+                    break;
+                    
+                case 'ahead':
+                    versionStatusDisplay.textContent = `🚀 ${translations.versionDevMode || 'Dev version'}`;
+                    versionStatusDisplay.className = 'version-status ahead';
+                    break;
+                    
+                default:
+                    versionStatusDisplay.textContent = 'Unknown status';
+                    versionStatusDisplay.className = 'version-status error';
+            }
+        } else if (status === 'offline') {
+            versionStatusDisplay.textContent = `📡 ${translations.versionOffline || 'Offline'}`;
+            versionStatusDisplay.className = 'version-status error';
+        } else {
+            versionStatusDisplay.textContent = translations.versionCheckFailed || 'Check failed';
+            versionStatusDisplay.className = 'version-status error';
+        }
     };
 
     // --- Utility Functions ---
@@ -394,11 +479,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const langResponse = await fetch(`/locales/${newLang}.json`);
             const langData = await langResponse.json();
             applyTranslations(langData);
+            
+            // Refresh version info with new language (without network request)
+            refreshVersionDisplay();
         } catch (error) { console.error(`Failed to update language to ${newLang}:`, error); }
     });
 
     // --- Initial Call ---
     await loadLanguage();
     await loadInitialSettings();
+    await loadVersionInfo(); // Load version info after language is loaded
     updateAspectRatio();
 });
