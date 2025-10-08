@@ -15,7 +15,7 @@ from typing import List, Optional
 from PIL import Image
 
 # Import version management
-from version import get_version_info
+from version import get_version_info, get_comprehensive_update_status
 
 # --- FastAPI App ---
 app = FastAPI()
@@ -88,6 +88,21 @@ async def get_version():
             content={
                 "error": f"Failed to get version info: {str(e)}",
                 "version": "unknown"
+            },
+            status_code=500
+        )
+
+@app.get("/api/update-status")
+async def get_update_status():
+    """Get comprehensive update status including GitHub latest version"""
+    try:
+        update_status = get_comprehensive_update_status()
+        return JSONResponse(content=update_status)
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "error": f"Failed to get update status: {str(e)}",
+                "status": "error"
             },
             status_code=500
         )
