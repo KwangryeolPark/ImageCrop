@@ -15,7 +15,13 @@ from typing import List, Optional
 from PIL import Image
 
 # Import version management
-from version import get_version_info, get_comprehensive_update_status
+from version import (
+    get_version_info, 
+    get_comprehensive_update_status,
+    get_release_notes,
+    get_latest_release_notes,
+    compare_release_notes
+)
 
 # --- FastAPI App ---
 app = FastAPI()
@@ -261,6 +267,73 @@ def open_browser(port):
     threading.Thread(target=delayed_open, daemon=True).start()
 
 # --- Main Server Start ---
+# --- Release Notes API Endpoints ---
+@app.get("/api/release-notes/latest")
+async def get_latest_release_notes_api():
+    """Get the latest release notes"""
+    try:
+        release_notes = get_latest_release_notes()
+        return JSONResponse(content=release_notes)
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "status": "error",
+                "message": f"Failed to get latest release notes: {str(e)}"
+            },
+            status_code=500
+        )
+
+@app.get("/api/release-notes/{version}")
+async def get_release_notes_api(version: str, prefer_local: bool = False):
+    """
+    Get release notes for a specific version
+    
+    Args:
+        version: Version to get release notes for
+        prefer_local: If True, prefer local files over GitHub API
+    """
+    try:
+        release_notes = get_release_notes(version=version, prefer_local=prefer_local)
+        
+        if release_notes["status"] == "not_found":
+            return JSONResponse(
+                content=release_notes,
+                status_code=404
+            )
+        
+        return JSONResponse(content=release_notes)
+        
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "status": "error",
+                "message": f"Failed to get release notes for version {version}: {str(e)}"
+            },
+            status_code=500
+        )
+
+@app.get("/api/release-notes/compare/{from_version}/{to_version}")
+async def compare_release_notes_api(from_version: str, to_version: str):
+    """
+    Compare release notes between two versions
+    
+    Args:
+        from_version: Starting version
+        to_version: Target version
+    """
+    try:
+        comparison = compare_release_notes(from_version, to_version)
+        return JSONResponse(content=comparison)
+        
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "status": "error",
+                "message": f"Failed to compare release notes: {str(e)}"
+            },
+            status_code=500
+        )
+
 if __name__ == "__main__":
     print("Starting ImageCrop Server...")
     

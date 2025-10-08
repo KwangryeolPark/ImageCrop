@@ -220,6 +220,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update current version display
         currentVersionDisplay.textContent = `v${currentVersion}`;
         
+        // Clear any existing content in version status container
+        const statusContainer = versionStatusDisplay.parentElement;
+        
         // Update status display based on comparison
         if (status === 'success') {
             const comparison = updateStatus.comparison || {};
@@ -229,6 +232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'up_to_date':
                     versionStatusDisplay.textContent = `✅ ${translations.versionLatest || 'Latest'}`;
                     versionStatusDisplay.className = 'version-status up-to-date';
+                    addReleaseNotesLink(currentVersion);
                     break;
                     
                 case 'outdated':
@@ -243,11 +247,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         versionStatusDisplay.textContent = `🔧 v${latestVersion} ${translations.versionUpdateAvailable || 'available'}`;
                         versionStatusDisplay.className = 'version-status outdated';
                     }
+                    addReleaseNotesLink(latestVersion, 'new');
                     break;
                     
                 case 'ahead':
                     versionStatusDisplay.textContent = `🚀 ${translations.versionDevMode || 'Dev version'}`;
                     versionStatusDisplay.className = 'version-status ahead';
+                    addReleaseNotesLink(currentVersion);
                     break;
                     
                 default:
@@ -261,6 +267,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             versionStatusDisplay.textContent = translations.versionCheckFailed || 'Check failed';
             versionStatusDisplay.className = 'version-status error';
         }
+    };
+    
+    const addReleaseNotesLink = (version, type = 'current') => {
+        // Remove any existing release notes links
+        const existingLinks = document.querySelectorAll('.release-notes-trigger');
+        existingLinks.forEach(link => link.remove());
+        
+        // Create release notes link
+        const releaseNotesLink = document.createElement('button');
+        releaseNotesLink.className = 'release-notes-trigger';
+        releaseNotesLink.textContent = type === 'new' ? 'What\'s New?' : 'Release Notes';
+        releaseNotesLink.title = `View release notes for v${version}`;
+        
+        releaseNotesLink.addEventListener('click', () => {
+            if (window.showReleaseNotes) {
+                window.showReleaseNotes(version);
+            }
+        });
+        
+        // Add link next to version status
+        const statusContainer = versionStatusDisplay.parentElement;
+        statusContainer.appendChild(releaseNotesLink);
     };
 
     // --- Utility Functions ---

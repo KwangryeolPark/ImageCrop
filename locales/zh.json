@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "可更新",
     "versionChecking": "检查中...",
     "versionOffline": "离线",
-    "versionCheckFailed": "检查失败"
+    "versionCheckFailed": "检查失败",
+    "releaseNotes": "发布说明",
+    "releaseNotesWhatsNew": "新功能",
+    "releaseNotesOverview": "概览",
+    "releaseNotesChanges": "更改",
+    "releaseNotesRaw": "原始",
+    "releaseNotesSummary": "摘要",
+    "releaseNotesHighlights": "亮点",
+    "releaseNotesViewOnGitHub": "在GitHub上查看",
+    "releaseNotesDownload": "下载",
+    "releaseNotesLoading": "正在加载发布说明...",
+    "releaseNotesError": "无法加载发布说明"
 }

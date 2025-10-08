@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "Update available",
     "versionChecking": "Checking...",
     "versionOffline": "Offline",
-    "versionCheckFailed": "Check failed"
+    "versionCheckFailed": "Check failed",
+    "releaseNotes": "Release Notes",
+    "releaseNotesWhatsNew": "What's New",
+    "releaseNotesOverview": "Overview",
+    "releaseNotesChanges": "Changes",
+    "releaseNotesRaw": "Raw",
+    "releaseNotesSummary": "Summary",
+    "releaseNotesHighlights": "Highlights",
+    "releaseNotesViewOnGitHub": "View on GitHub",
+    "releaseNotesDownload": "Download",
+    "releaseNotesLoading": "Loading release notes...",
+    "releaseNotesError": "Failed to load release notes"
 }

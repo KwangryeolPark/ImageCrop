@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "利用可能",
     "versionChecking": "確認中...",
     "versionOffline": "オフライン",
-    "versionCheckFailed": "確認失敗"
+    "versionCheckFailed": "確認失敗",
+    "releaseNotes": "リリースノート",
+    "releaseNotesWhatsNew": "新機能",
+    "releaseNotesOverview": "概要",
+    "releaseNotesChanges": "変更点",
+    "releaseNotesRaw": "原文",
+    "releaseNotesSummary": "概要",
+    "releaseNotesHighlights": "ハイライト",
+    "releaseNotesViewOnGitHub": "GitHubで表示",
+    "releaseNotesDownload": "ダウンロード",
+    "releaseNotesLoading": "リリースノートを読み込み中...",
+    "releaseNotesError": "リリースノートの読み込みに失敗しました"
 }

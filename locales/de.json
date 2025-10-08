@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "verfügbar",
     "versionChecking": "Prüfen...",
     "versionOffline": "Offline",
-    "versionCheckFailed": "Prüfung fehlgeschlagen"
+    "versionCheckFailed": "Prüfung fehlgeschlagen",
+    "releaseNotes": "Versionshinweise",
+    "releaseNotesWhatsNew": "Was ist neu",
+    "releaseNotesOverview": "Übersicht",
+    "releaseNotesChanges": "Änderungen",
+    "releaseNotesRaw": "Roh",
+    "releaseNotesSummary": "Zusammenfassung",
+    "releaseNotesHighlights": "Highlights",
+    "releaseNotesViewOnGitHub": "Auf GitHub anzeigen",
+    "releaseNotesDownload": "Herunterladen",
+    "releaseNotesLoading": "Versionshinweise werden geladen...",
+    "releaseNotesError": "Versionshinweise konnten nicht geladen werden"
 }

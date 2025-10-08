@@ -9,7 +9,8 @@ import json
 import urllib.request
 import urllib.error
 from datetime import datetime
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
+import re
 
 # Version Information
 VERSION = "1.2.0"  # 원래 버전으로 복원
@@ -20,6 +21,11 @@ MIN_PYTHON_VERSION = "3.8"
 CACHE_FILE = "version_cache.json"
 DEFAULT_CACHE_DURATION = 3600  # 1 hour in seconds
 MAX_CACHE_AGE = 86400  # 24 hours maximum
+
+# Release Notes Configuration
+RELEASE_NOTES_DIR = "release-notes"
+RELEASE_NOTES_CACHE_FILE = "release_notes_cache.json"
+RELEASE_NOTES_CACHE_DURATION = 7200  # 2 hours for release notes
 
 def run_git_command(command: str) -> Optional[str]:
     """Execute git command and return output, or None if failed"""
@@ -826,6 +832,331 @@ def print_comprehensive_update_notification():
         print("ℹ️  Update check unavailable")
         print(f"ℹ️  Current Version: {VERSION}")
         print()
+
+
+# ====================================
+# RELEASE NOTES MANAGEMENT SYSTEM
+# ====================================
+
+def get_github_release_notes(version: str = None) -> Dict[str, any]:
+    """
+    Get release notes from GitHub API
+    
+    Args:
+        version: Specific version to get notes for, or None for latest
+        
+    Returns:
+        Dict containing release notes information
+    """
+    try:
+        if version:
+            # Get specific release by tag
+            url = f"https://api.github.com/repos/KwangryeolPark/ImageCrop/releases/tags/v{version}"
+        else:
+            # Get latest release
+            url = "https://api.github.com/repos/KwangryeolPark/ImageCrop/releases/latest"
+        
+        headers = {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'ImageCrop-Version-Checker'
+        }
+        
+        request = urllib.request.Request(url, headers=headers)
+        
+        with urllib.request.urlopen(request, timeout=10) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode('utf-8'))
+                
+                return {
+                    "status": "success",
+                    "source": "github_api",
+                    "version": data.get("tag_name", "").replace("v", ""),
+                    "title": data.get("name", ""),
+                    "body": data.get("body", ""),
+                    "published_at": data.get("published_at", ""),
+                    "html_url": data.get("html_url", ""),
+                    "download_url": data.get("zipball_url", ""),
+                    "prerelease": data.get("prerelease", False),
+                    "draft": data.get("draft", False)
+                }
+            else:
+                return {
+                    "status": "error",
+                    "message": f"HTTP {response.status}"
+                }
+                
+    except urllib.error.URLError as e:
+        return {
+            "status": "network_error",
+            "message": f"Network error: {str(e)}"
+        }
+    except json.JSONDecodeError as e:
+        return {
+            "status": "parse_error", 
+            "message": f"JSON parse error: {str(e)}"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}"
+        }
+
+def parse_release_notes(content: str) -> Dict[str, any]:
+    """
+    Parse release notes content and extract structured information
+    
+    Args:
+        content: Raw release notes content (markdown)
+        
+    Returns:
+        Dict containing parsed release notes
+    """
+    if not content:
+        return {
+            "sections": [],
+            "summary": "",
+            "highlights": []
+        }
+    
+    # Split into sections by headers
+    sections = []
+    current_section = None
+    lines = content.split('\n')
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Detect headers (### or ##)
+        if line.startswith('###'):
+            if current_section:
+                sections.append(current_section)
+            current_section = {
+                "title": line.replace('###', '').strip(),
+                "level": 3,
+                "items": []
+            }
+        elif line.startswith('##'):
+            if current_section:
+                sections.append(current_section)
+            current_section = {
+                "title": line.replace('##', '').strip(),
+                "level": 2,
+                "items": []
+            }
+        elif line.startswith('- ') or line.startswith('* '):
+            if current_section:
+                item = line[2:].strip()
+                # Categorize items
+                category = "other"
+                if any(keyword in item.lower() for keyword in ['new', 'add', 'feature', 'implement']):
+                    category = "new"
+                elif any(keyword in item.lower() for keyword in ['fix', 'bug', 'resolve', 'correct']):
+                    category = "fix"
+                elif any(keyword in item.lower() for keyword in ['improve', 'enhance', 'update', 'optimize']):
+                    category = "improvement"
+                elif any(keyword in item.lower() for keyword in ['security', 'vulnerability', 'safe']):
+                    category = "security"
+                
+                current_section["items"].append({
+                    "text": item,
+                    "category": category
+                })
+        else:
+            # Regular text, could be summary
+            if current_section and not current_section["items"]:
+                current_section["summary"] = line
+    
+    # Add last section
+    if current_section:
+        sections.append(current_section)
+    
+    # Extract highlights (important items)
+    highlights = []
+    for section in sections:
+        for item in section.get("items", []):
+            if item["category"] in ["new", "security"] or "important" in item["text"].lower():
+                highlights.append({
+                    "text": item["text"],
+                    "category": item["category"],
+                    "section": section["title"]
+                })
+    
+    # Generate summary
+    summary = ""
+    if sections:
+        first_section = sections[0]
+        if "summary" in first_section:
+            summary = first_section["summary"]
+        elif first_section.get("items"):
+            summary = f"{len(first_section['items'])} changes in {first_section['title']}"
+    
+    return {
+        "sections": sections,
+        "summary": summary,
+        "highlights": highlights,
+        "total_changes": sum(len(s.get("items", [])) for s in sections)
+    }
+
+def get_local_release_notes(version: str) -> Dict[str, any]:
+    """
+    Get release notes from local files
+    
+    Args:
+        version: Version to get release notes for
+        
+    Returns:
+        Dict containing release notes information
+    """
+    try:
+        # Try different file naming patterns
+        possible_files = [
+            f"RELEASE_NOTES_v{version}.md",
+            f"release_notes_v{version}.md", 
+            f"v{version}.md",
+            f"{version}.md"
+        ]
+        
+        release_notes_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), RELEASE_NOTES_DIR)
+        
+        for filename in possible_files:
+            filepath = os.path.join(release_notes_dir, filename)
+            if os.path.exists(filepath):
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                parsed = parse_release_notes(content)
+                
+                return {
+                    "status": "success",
+                    "source": "local_file",
+                    "version": version,
+                    "filepath": filepath,
+                    "content": content,
+                    "parsed": parsed
+                }
+        
+        return {
+            "status": "not_found",
+            "message": f"No local release notes found for version {version}",
+            "searched_files": possible_files
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error reading local release notes: {str(e)}"
+        }
+
+def get_release_notes(version: str = None, prefer_local: bool = False) -> Dict[str, any]:
+    """
+    Get release notes for a specific version, trying multiple sources
+    
+    Args:
+        version: Version to get notes for, or None for latest
+        prefer_local: If True, try local files first
+        
+    Returns:
+        Dict containing release notes information
+    """
+    if version is None:
+        # For latest, always use GitHub API first
+        github_result = get_github_release_notes()
+        if github_result["status"] == "success":
+            # Also parse the content
+            github_result["parsed"] = parse_release_notes(github_result.get("body", ""))
+            return github_result
+        
+        # Fallback to local latest
+        return {
+            "status": "fallback",
+            "message": "Using current version info as latest",
+            "version": VERSION,
+            "content": f"# ImageCrop v{VERSION}\n\nCurrent development version.",
+            "parsed": parse_release_notes(f"Current development version v{VERSION}")
+        }
+    
+    # For specific version, try based on preference
+    if prefer_local:
+        local_result = get_local_release_notes(version)
+        if local_result["status"] == "success":
+            return local_result
+        
+        # Fallback to GitHub
+        github_result = get_github_release_notes(version)
+        if github_result["status"] == "success":
+            github_result["parsed"] = parse_release_notes(github_result.get("body", ""))
+            return github_result
+    else:
+        # Try GitHub first
+        github_result = get_github_release_notes(version)
+        if github_result["status"] == "success":
+            github_result["parsed"] = parse_release_notes(github_result.get("body", ""))
+            return github_result
+        
+        # Fallback to local
+        local_result = get_local_release_notes(version)
+        if local_result["status"] == "success":
+            return local_result
+    
+    return {
+        "status": "not_found",
+        "message": f"No release notes found for version {version}",
+        "version": version
+    }
+
+def compare_release_notes(from_version: str, to_version: str) -> Dict[str, any]:
+    """
+    Compare release notes between two versions
+    
+    Args:
+        from_version: Starting version
+        to_version: Target version
+        
+    Returns:
+        Dict containing comparison information
+    """
+    try:
+        from_notes = get_release_notes(from_version)
+        to_notes = get_release_notes(to_version)
+        
+        changes = []
+        if to_notes["status"] == "success" and "parsed" in to_notes:
+            parsed = to_notes["parsed"]
+            for section in parsed["sections"]:
+                for item in section["items"]:
+                    changes.append({
+                        "text": item["text"],
+                        "category": item["category"],
+                        "section": section["title"]
+                    })
+        
+        return {
+            "status": "success",
+            "from_version": from_version,
+            "to_version": to_version,
+            "changes": changes,
+            "total_changes": len(changes),
+            "highlights": to_notes.get("parsed", {}).get("highlights", []),
+            "from_notes": from_notes,
+            "to_notes": to_notes
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error comparing release notes: {str(e)}"
+        }
+
+def get_latest_release_notes() -> Dict[str, any]:
+    """
+    Get the latest release notes
+    
+    Returns:
+        Dict containing latest release notes
+    """
+    return get_release_notes(version=None)
 
 # --- Legacy function for backward compatibility ---
 

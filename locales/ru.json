@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "доступно",
     "versionChecking": "Проверка...",
     "versionOffline": "Оффлайн",
-    "versionCheckFailed": "Ошибка проверки"
+    "versionCheckFailed": "Ошибка проверки",
+    "releaseNotes": "Примечания к выпуску",
+    "releaseNotesWhatsNew": "Что нового",
+    "releaseNotesOverview": "Обзор",
+    "releaseNotesChanges": "Изменения",
+    "releaseNotesRaw": "Исходный",
+    "releaseNotesSummary": "Резюме",
+    "releaseNotesHighlights": "Основные моменты",
+    "releaseNotesViewOnGitHub": "Посмотреть на GitHub",
+    "releaseNotesDownload": "Скачать",
+    "releaseNotesLoading": "Загрузка примечаний к выпуску...",
+    "releaseNotesError": "Не удалось загрузить примечания к выпуску"
 }

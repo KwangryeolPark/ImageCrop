@@ -25,5 +25,16 @@
     "versionUpdateAvailable": "disponible",
     "versionChecking": "Vérification...",
     "versionOffline": "Hors ligne",
-    "versionCheckFailed": "Vérification échouée"
+        "versionCheckFailed": "Échec de la vérification",
+    "releaseNotes": "Notes de version",
+    "releaseNotesWhatsNew": "Nouveautés",
+    "releaseNotesOverview": "Aperçu",
+    "releaseNotesChanges": "Changements",
+    "releaseNotesRaw": "Brut",
+    "releaseNotesSummary": "Résumé",
+    "releaseNotesHighlights": "Points forts",
+    "releaseNotesViewOnGitHub": "Voir sur GitHub",
+    "releaseNotesDownload": "Télécharger",
+    "releaseNotesLoading": "Chargement des notes de version...",
+    "releaseNotesError": "Impossible de charger les notes de version"
 }
