@@ -14,6 +14,7 @@ This project is a web-based tool for cropping and resizing images from a specifi
 -   **🆕 Auto Port Detection**: Automatically finds available ports (8000-8010) when the default port is occupied.
 -   **🆕 Browser Auto-Launch**: Automatically opens your browser after the server starts successfully.
 -   **🆕 Environment Validation**: Comprehensive checks for Python and pip installation with helpful error messages.
+-   **🆕 Version Management**: Real-time version tracking with Git integration, branch status, and commit information.
 
 ---
 
@@ -120,8 +121,9 @@ The application will automatically find an available port (starting from 8000) a
 | File/Directory            | Description                                                                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [main.py](http://main.py) | The core backend application built with FastAPI. Handles API endpoints, image processing, and includes auto port detection and browser launching features. |
-| **run.bat** | **🆕 Windows startup script** with environment validation, dependency installation, and one-click execution support. |
-| **run.sh** | **Enhanced Unix/Linux startup script** with Python version checking, pip validation, and automatic dependency management. |
+| **version.py** | **🆕 Version management system** with Git integration, branch tracking, commit status, and `/api/version` endpoint support. |
+| **run.bat** | **🆕 Windows startup script** with environment validation, dependency installation, version display, and one-click execution support. |
+| **run.sh** | **Enhanced Unix/Linux startup script** with Python version checking, pip validation, version display, and automatic dependency management. |
 | cropper.html              | The main HTML file for the image cropping interface. This is the primary user-facing page of the application.                                                                 |
 | index.html                | The initial landing page where users select their preferred language.                                                                                                         |
 | static/                   | Contains static web assets: style.css for all styling and script.js & cropper.js for frontend logic.                                                                          |

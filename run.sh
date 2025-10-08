@@ -2,6 +2,15 @@
 
 echo "Starting ImageCrop Server..."
 
+# Display version information
+if [ -f "version.py" ]; then
+    echo
+    python3 version.py 2>/dev/null || python version.py 2>/dev/null
+else
+    echo "ImageCrop Server"
+fi
+echo
+
 # Environment validation
 echo "Checking environment..."
 
