@@ -9,8 +9,8 @@ from datetime import datetime
 from typing import Dict, Optional, Tuple
 
 # Version Information
-VERSION = "1.1.0"
-RELEASE_DATE = "2025-10-08"
+VERSION = "1.2.0"
+RELEASE_DATE = "2025-10-09"
 MIN_PYTHON_VERSION = "3.8"
 
 def run_git_command(command: str) -> Optional[str]:
