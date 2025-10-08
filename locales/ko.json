@@ -10,6 +10,7 @@
     "convertedImageHeight": "변환될 이미지 높이 (비율)",
     "aspectRatio": "가로:세로 비율",
     "imageDescription": "이미지 설명 (저장 시 .txt 파일로 생성)",
+    "imageDescriptionPlaceholder": "이미지에 대한 설명을 입력하세요...",
     "saveCropOnly": "선택 영역 저장 (크롭만)",
     "saveCropResize": "자른 후 크기 조정하여 저장",
     "viewerPlaceholder": "폴더 경로를 입력하고 '이미지 불러오기'를 클릭하세요.",

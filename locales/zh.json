@@ -10,6 +10,7 @@
     "convertedImageHeight": "转换后高度 (比例)",
     "aspectRatio": "宽高比",
     "imageDescription": "图像描述 (将创建 .txt 文件)",
+    "imageDescriptionPlaceholder": "请为此图像输入描述...",
     "saveCropOnly": "仅保存裁剪区域",
     "saveCropResize": "裁剪并调整大小后保存",
     "viewerPlaceholder": "输入文件夹路径，然后点击“加载图像”。",
