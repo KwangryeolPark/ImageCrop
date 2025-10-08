@@ -10,6 +10,7 @@
     "convertedImageHeight": "Hauteur de conversion (Ratio)",
     "aspectRatio": "Format de l'image",
     "imageDescription": "Description de l'image (un fichier .txt sera créé)",
+    "imageDescriptionPlaceholder": "Entrez une description pour cette image...",
     "saveCropOnly": "Enregistrer la zone recadrée (Seulement)",
     "saveCropResize": "Recadrer & Redimensionner puis enregistrer",
     "viewerPlaceholder": "Entrez le chemin du dossier et cliquez sur 'Charger les images'.",

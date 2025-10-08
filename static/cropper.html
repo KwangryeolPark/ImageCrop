@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title data-i18n-key="headerTitle">Image Resizer</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -64,10 +67,8 @@
 
                 <div class="control-group">
                     <label for="image-description" data-i18n-key="imageDescription"></label>
-                    <div class="control-group">
-                        <label for="image-description" data-i18n-key="imageDescription"></label>
-                        <textarea id="image-description" rows="5" data-i18n-key="imageDescription"></textarea>
-                    </div>
+                    <textarea id="image-description" rows="5" data-i18n-placeholder="imageDescriptionPlaceholder"></textarea>
+                </div>
 
                     <div class="button-group">
                         <button id="save-button" data-i18n-key="saveCropOnly" disabled></button>

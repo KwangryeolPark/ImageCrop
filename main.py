@@ -14,8 +14,24 @@ from pydantic import BaseModel
 from typing import List, Optional
 from PIL import Image
 
+# Import version management
+from version import get_version_info
+
 # --- FastAPI App ---
 app = FastAPI()
+
+# Development: Add no-cache headers for static files
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    
+    # Only add no-cache headers for HTML, CSS, JS files during development
+    if any(request.url.path.endswith(ext) for ext in ['.html', '.css', '.js', '', '/']):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    
+    return response
 
 # --- Pydantic Models ---
 class ImageListRequest(BaseModel):
@@ -60,6 +76,21 @@ async def save_language(request: LanguageRequest):
         return {"status": "success", "language": request.language}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save language file: {e}")
+
+@app.get("/api/version")
+async def get_version():
+    """Get comprehensive version information"""
+    try:
+        version_info = get_version_info()
+        return JSONResponse(content=version_info)
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "error": f"Failed to get version info: {str(e)}",
+                "version": "unknown"
+            },
+            status_code=500
+        )
 
 @app.get("/api/get-language")
 async def get_language():

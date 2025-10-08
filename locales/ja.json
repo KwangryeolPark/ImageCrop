@@ -10,6 +10,7 @@
     "convertedImageHeight": "変換後の高さ (比率)",
     "aspectRatio": "アスペクト比",
     "imageDescription": "画像の説明 (保存時に.txtファイルが作成されます)",
+    "imageDescriptionPlaceholder": "この画像の説明を入力してください...",
     "saveCropOnly": "選択範囲を保存 (クロップのみ)",
     "saveCropResize": "クロップ後にリサイズして保存",
     "viewerPlaceholder": "フォルダパスを入力し、「画像を読み込む」をクリックしてください。",

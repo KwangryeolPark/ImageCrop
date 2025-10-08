@@ -10,6 +10,7 @@
     "convertedImageHeight": "Zielhöhe (Verhältnis)",
     "aspectRatio": "Seitenverhältnis",
     "imageDescription": "Bildbeschreibung (.txt-Datei wird erstellt)",
+    "imageDescriptionPlaceholder": "Beschreibung für dieses Bild eingeben...",
     "saveCropOnly": "Nur zugeschnittenen Bereich speichern",
     "saveCropResize": "Zuschneiden & Größe anpassen, dann speichern",
     "viewerPlaceholder": "Ordnerpfad eingeben und auf 'Bilder laden' klicken.",

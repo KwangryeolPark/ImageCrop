@@ -41,6 +41,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         });
+        // Handle placeholder translations
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[key]) {
+                el.placeholder = translations[key];
+            }
+        });
         document.title = translations['headerTitle'] || 'Image Resizer';
     };
 

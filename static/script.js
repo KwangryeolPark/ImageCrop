@@ -3,26 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmButton = document.getElementById('confirm-language-button');
     let selectedLang = 'en'; // Default
 
-    // 이 함수는 이제 불필요하므로 삭제합니다.
-    /*
-    const checkExistingLanguage = async () => {
-        try {
-            const response = await fetch('/api/get-language');
-            if (response.ok) {
-                const data = await response.json();
-                if (data.language) {
-                    window.location.href = '/cropper'; // 이 리디렉션 로직을 제거합니다.
-                }
-            } else {
-                initializeSelector();
-            }
-        } catch (error) {
-            console.error("Error checking language, showing selector.", error);
-            initializeSelector();
-        }
-    };
-    */
-
     // 언어 선택 UI 초기화
     const initializeSelector = async () => {
         const browserLang = navigator.language.slice(0, 2);
@@ -45,6 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const key = el.getAttribute('data-i18n-key');
                 if (translations[key]) {
                     el.textContent = translations[key];
+                }
+            });
+            // Handle placeholder translations
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[key]) {
+                    el.placeholder = translations[key];
                 }
             });
             document.title = translations['selectLanguage'] || 'Select Language';
@@ -82,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 실행 시작
-    // checkExistingLanguage() 대신 initializeSelector()를 바로 호출합니다.
+    // 실행 시작 - 언어 선택기 초기화
     initializeSelector();
 });

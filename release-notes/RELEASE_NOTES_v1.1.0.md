@@ -20,6 +20,15 @@ We're excited to announce ImageCrop v1.1.0, which brings significant improvement
 - **Cross-Platform Scripts**: Enhanced `run.sh` for Unix/Linux with better error handling
 - **Comprehensive Environment Checks**: Python 3.8+ validation and dependency verification
 - **Cleaner Repository**: Added comprehensive `.gitignore` patterns
+- **Version Management System**: Comprehensive version tracking with Git integration
+
+### 📊 **New Version Management System**
+- **Centralized Version Control**: New `version.py` with comprehensive version information
+- **Git Integration**: Real-time branch, commit, and sync status tracking
+- **Master Branch Comparison**: Automatic detection of commits ahead/behind master
+- **Version API**: RESTful `/api/version` endpoint for programmatic access
+- **Startup Version Display**: Version information shown when starting server
+- **Development vs Production**: Automatic version type classification
 
 ## 🛠️ **Technical Improvements**
 
@@ -27,6 +36,9 @@ We're excited to announce ImageCrop v1.1.0, which brings significant improvement
 - **Robust Port Management**: Socket-based port detection with automatic fallback
 - **Enhanced Error Handling**: Detailed error messages with solution suggestions
 - **Code Optimization**: Removed redundant checks and improved startup logic
+- **Version Tracking Infrastructure**: Git-based version management with commit tracking
+- **Cache Prevention**: Development-friendly cache headers for real-time updates
+- **Multi-language Placeholder Support**: Enhanced UI with context-aware placeholders
 
 ## 📥 **How to Use**
 

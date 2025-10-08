@@ -17,17 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dependency Auto-Installation**: Automatically installs required packages from requirements.txt
 - **Cross-Platform Compatibility**: Enhanced support for both Windows and Unix/Linux systems
 - **Comprehensive .gitignore**: Added patterns for Python, IDE, OS-specific, and temporary files
+- **Version Management System**: Centralized version control with Git integration (`version.py`)
+- **Version API Endpoint**: RESTful `/api/version` endpoint for programmatic version access
+- **Startup Version Display**: Version information shown in run.sh and run.bat scripts
+- **Multi-language Placeholders**: Enhanced UI placeholders for all supported languages
+- **Cache Prevention**: Development-friendly HTTP headers for real-time updates
 
 ### Changed
 - **Enhanced Startup Scripts**: Improved `run.sh` with better error handling and user feedback
 - **Server Startup Logic**: Refactored main.py to handle port conflicts and browser launching
 - **User Experience**: Streamlined setup process from manual steps to one-click execution
+- **Language Selection Flow**: Fixed auto-redirect to prevent language selector flash
+- **HTML Structure**: Corrected Image Description form layout (removed duplicate labels)
 
 ### Improved
 - **Error Handling**: Added detailed error messages with solution suggestions
 - **Threading**: Non-blocking browser launch using separate thread
 - **Logging**: Better console output with clear status messages
 - **Code Organization**: Removed redundant file existence checks
+- **Version Tracking**: Real-time Git branch and commit status monitoring
+- **Development Workflow**: Automatic cache prevention for faster development cycles
 
 ### Technical Details
 - Port detection using socket programming (8000-8010 range)

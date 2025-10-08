@@ -4,6 +4,17 @@ title ImageCrop Server
 echo Starting ImageCrop Server...
 echo.
 
+REM Display version information
+if exist version.py (
+    python version.py 2>nul
+    if errorlevel 1 (
+        echo ImageCrop Server
+    )
+) else (
+    echo ImageCrop Server
+)
+echo.
+
 REM Environment validation
 echo Checking environment...
 

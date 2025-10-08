@@ -4,8 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Select Language</title>
     <link rel="stylesheet" href="/static/style.css">
+    
+    <!-- Early language check to prevent flash -->
+    <script>
+        (async function() {
+            console.log("Checking for existing language...");
+            try {
+                const response = await fetch('/api/get-language');
+                console.log("Response status:", response.status);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Language data:", data);
+                    if (data.language) {
+                        console.log("Language found:", data.language, "- Redirecting to cropper");
+                        // Redirect immediately before page renders
+                        window.location.replace('/cropper');
+                        return;
+                    } else {
+                        console.log("No language set in response");
+                    }
+                } else {
+                    console.log("Response not OK:", response.status);
+                }
+            } catch (error) {
+                // If error, continue to show language selector
+                console.log("Error checking language:", error);
+            }
+            console.log("Showing language selector");
+        })();
+    </script>
 </head>
 
 <body class="language-selector-body">

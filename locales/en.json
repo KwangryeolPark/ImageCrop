@@ -10,6 +10,7 @@
     "convertedImageHeight": "Converted Image Height (Ratio)",
     "aspectRatio": "Aspect Ratio",
     "imageDescription": "Image Description (.txt file will be created)",
+    "imageDescriptionPlaceholder": "Enter description for this image...",
     "saveCropOnly": "Save Cropped Area (Crop Only)",
     "saveCropResize": "Save after Crop & Resize",
     "viewerPlaceholder": "Enter folder path and click 'Load Images'.",
