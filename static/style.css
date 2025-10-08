@@ -59,7 +59,7 @@ header h1 {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-size: 0.8em;
+    font-size: 0.9em;
     opacity: 0.9;
 }
 
@@ -515,7 +515,7 @@ button:disabled {
 
 @media (max-width: 480px) {
     .version-info {
-        font-size: 0.7em;
+        font-size: 0.8em;
     }
     
     .current-version, .version-status {
