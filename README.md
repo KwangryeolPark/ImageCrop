@@ -10,6 +10,10 @@ This project is a web-based tool for cropping and resizing images from a specifi
 -   **Aspect Ratio Control**: Automatically resize your crop box to maintain a specific aspect ratio, with presets for common sizes like 512x512 and 512x768.
 -   **Save & Export**: Save cropped images to a dedicated `resized` subfolder. You can choose to either save the cropped image as-is or resize it to your target dimensions.
 -   **Image Description**: Add an optional text description that gets saved alongside the processed image in a `.txt` file.
+-   **🆕 Cross-Platform Support**: Easy-to-use startup scripts for both Windows (`run.bat`) and Unix/Linux (`run.sh`) systems.
+-   **🆕 Auto Port Detection**: Automatically finds available ports (8000-8010) when the default port is occupied.
+-   **🆕 Browser Auto-Launch**: Automatically opens your browser after the server starts successfully.
+-   **🆕 Environment Validation**: Comprehensive checks for Python and pip installation with helpful error messages.
 
 ---
 
@@ -17,45 +21,115 @@ This project is a web-based tool for cropping and resizing images from a specifi
 
 ### Prerequisites
 
-You'll need **Python 3.8+** and **uv** (or pip) installed on your system.
+You'll need **Python 3.8+** installed on your system. The startup scripts will automatically check and install required dependencies.
 
 ### Installation
+
+#### For Windows Users
+
+1.  Clone this repository:
+    ```cmd
+    git clone https://github.com/KwangryeolPark/ImageCrop.git
+    cd ImageCrop
+    ```
+2.  Double-click `run.bat` to automatically install dependencies and start the server.
+
+#### For Linux/macOS Users
 
 1.  Clone this repository:
     ```bash
     git clone https://github.com/KwangryeolPark/ImageCrop.git
     cd ImageCrop
     ```
-2.  Install the required packages.
+2.  Make the script executable and run:
     ```bash
-    pip install -r requirements.txt
+    chmod +x run.sh
+    ./run.sh
     ```
+
+#### Manual Installation (All Platforms)
+
+If you prefer to install dependencies manually:
+```bash
+pip install -r requirements.txt
+```
 
 ### Running the Application
 
-To run the application, execute the `run.sh` script or use the `uvicorn` command directly:
+#### Windows
+Simply double-click `run.bat` file. The script will:
+- Automatically validate your Python installation
+- Install required dependencies if needed
+- Start the server on an available port (8000-8010)
+- Open your browser automatically
 
+#### Linux/macOS
+Run the following command in your terminal:
 ```bash
-# Using the provided script
-sh run.sh
+./run.sh
+```
+The script will:
+- Check Python 3.8+ installation
+- Validate pip availability
+- Install dependencies automatically
+- Start the server and open your browser
 
-# Or directly with uvicorn
+#### Manual Start (All Platforms)
+You can also start the server manually:
+```bash
+# Direct method
+python main.py
+
+# Or using uvicorn directly
 uvicorn main:app --reload
 ```
-This will start the development server at http://127.0.0.1:8000. Open this URL in your web browser to use the application.
 
-## Project Structure & File Descriptions
+The application will automatically find an available port (starting from 8000) and display the URL in the console. Your browser will open automatically, or you can manually navigate to the displayed URL.
+
+---
+
+## Releases
+
+<details>
+<summary><strong>v1.1.0</strong> - 2025-10-08 🎉</summary>
+
+### What's New
+- **🖥️ Windows Support**: Added `run.bat` script for one-click execution on Windows
+- **🚀 Auto Port Detection**: Automatically finds available ports (8000-8010) when default port is occupied
+- **🌐 Browser Auto-Launch**: Automatically opens browser after server starts successfully
+- **✅ Environment Validation**: Comprehensive Python and pip installation checks
+- **📦 Dependency Management**: Automatic installation of required packages
+- **🔧 Enhanced Scripts**: Improved error handling and user feedback across all platforms
+
+### Technical Improvements
+- Non-blocking browser launch using threading
+- Robust port management with socket-based detection
+- Enhanced error messages with solution suggestions
+- Cross-platform compatibility improvements
+
+[View Full Changelog](./CHANGELOG.md) | [Release Notes](./release-notes/RELEASE_NOTES_v1.1.0.md)
+</details>
+
+---
+
+<details>
+<summary><strong>Project Structure & File Descriptions</strong></summary>
 
 | File/Directory            | Description                                                                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [main.py](http://main.py) | The core backend application built with FastAPI. It handles all API endpoints for listing, serving, cropping, and saving images. It also manages language and settings files. |
+| [main.py](http://main.py) | The core backend application built with FastAPI. Handles API endpoints, image processing, and includes auto port detection and browser launching features. |
+| **run.bat** | **🆕 Windows startup script** with environment validation, dependency installation, and one-click execution support. |
+| **run.sh** | **Enhanced Unix/Linux startup script** with Python version checking, pip validation, and automatic dependency management. |
 | cropper.html              | The main HTML file for the image cropping interface. This is the primary user-facing page of the application.                                                                 |
 | index.html                | The initial landing page where users select their preferred language.                                                                                                         |
 | static/                   | Contains static web assets: style.css for all styling and script.js & cropper.js for frontend logic.                                                                          |
 | locales/                  | Stores JSON files for different language translations. The application dynamically loads these to support multiple languages.                                                 |
-| requirements.txt          | Lists the Python packages required to run the backend, including                                                                                                              |
-| .gitignore                | Configures files and directories that Git should ignore, such as virtual environments                                                                                         |
-| [run.sh](http://run.sh)   | A simple shell script to start the FastAPI server with uvicorn.                                                                                                               |
+| requirements.txt          | Lists the Python packages required to run the backend, including FastAPI and Pillow.                                                                                              |
+| **CHANGELOG.md**                | **🆕 Version history and detailed change documentation following Keep a Changelog standard.** |
+| **release-notes/**                | **🆕 Directory containing detailed release notes for each version.** |
+| .gitignore                | **Enhanced Git ignore patterns** for Python projects, IDEs, OS-specific files, and development artifacts.                                                                                         |
+
+</details>
 
 
 ## Acknowledgements
